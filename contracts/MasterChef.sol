@@ -66,25 +66,25 @@ library SafeMath {
 
 interface IBEP20 {
 
-	function totalSupply() external view returns(uint256) 
+	function totalSupply() external view returns(uint256);
 
-	function decimals() external view returns(uint8) 
+	function decimals() external view returns(uint8);
 
-	function symbol() external view returns(string memory) 
+	function symbol() external view returns(string memory);
 
-	function name() external view returns(string memory) 
+	function name() external view returns(string memory);
 
-	function getOwner() external view returns(address) 
+	function getOwner() external view returns(address);
 
-	function balanceOf(address account) external view returns(uint256) 
+	function balanceOf(address account) external view returns(uint256);
 
-	function transfer(address recipient, uint256 amount) external returns(bool) 
+	function transfer(address recipient, uint256 amount) external returns(bool);
 
-	function allowance(address _owner, address spender) external view returns(uint256) 
+	function allowance(address _owner, address spender) external view returns(uint256);
 
-	function approve(address spender, uint256 amount) external returns(bool) 
+	function approve(address spender, uint256 amount) external returns(bool);
 
-	function transferFrom(address sender, address recipient, uint256 amount) external returns(bool) 
+	function transferFrom(address sender, address recipient, uint256 amount) external returns(bool);
 	event Transfer(address indexed from, address indexed to, uint256 value);
 	event Approval(address indexed owner, address indexed spender, uint256 value);
 }
@@ -102,7 +102,7 @@ library Address {
 
 	function sendValue(address payable recipient, uint256 amount) internal {
 		require(address(this).balance >= amount, "Address: insufficient balance");
-		(bool success, ) = ("");
+		(bool success, ) = recipient.call {value: amount}("");
 		require(success, "Address: unable to send value, recipient may have reverted");
 	}
 
@@ -125,7 +125,7 @@ library Address {
 
 	function _functionCallWithValue(address target, bytes memory data, uint256 weiValue, string memory errorMessage) private returns(bytes memory) {
 		require(isContract(target), "Address: call to non-contract");
-		(bool success, bytes memory returndata) = (data);
+		(bool success, bytes memory returndata) = target.call {value: weiValue}(data);
 		if (success) {
 			return returndata;
 		} else {
@@ -206,7 +206,7 @@ contract Ownable is Context {
 		return _owner;
 	}
 
-	modifier onlyOwner {
+	modifier onlyOwner() {
 		require(_owner == _msgSender(), "Ownable: caller is not the owner");
 		_;
 	}
@@ -243,45 +243,45 @@ contract BEP20 is Context, IBEP20, Ownable {
 		_decimals = 18;
 	}
 
-	function getOwner() external view returns(address) {
+	function getOwner() external override view returns(address) {
 		return owner();
 	}
 
-	function name() public view returns(string memory) {
+	function name() public override view returns(string memory) {
 		return _name;
 	}
 
-	function decimals() public view returns(uint8) {
+	function decimals() public override view returns(uint8) {
 		return _decimals;
 	}
 
-	function symbol() public view returns(string memory) {
+	function symbol() public override view returns(string memory) {
 		return _symbol;
 	}
 
-	function totalSupply() public view returns(uint256) {
+	function totalSupply() public override view returns(uint256) {
 		return _totalSupply;
 	}
 
-	function balanceOf(address account) public view returns(uint256) {
+	function balanceOf(address account) public override view returns(uint256) {
 		return _balances[account];
 	}
 
-	function transfer(address recipient, uint256 amount) public returns(bool) {
+	function transfer(address recipient, uint256 amount) public override returns(bool) {
 		_transfer(_msgSender(), recipient, amount);
 		return true;
 	}
 
-	function allowance(address owner, address spender) public view returns(uint256) {
+	function allowance(address owner, address spender) public override view returns(uint256) {
 		return _allowances[owner][spender];
 	}
 
-	function approve(address spender, uint256 amount) public returns(bool) {
+	function approve(address spender, uint256 amount) public override returns(bool) {
 		_approve(_msgSender(), spender, amount);
 		return true;
 	}
 
-	function transferFrom(address sender, address recipient, uint256 amount) public returns(bool) {
+	function transferFrom(address sender, address recipient, uint256 amount) public override returns(bool) {
 		_transfer(sender, recipient, amount);
 		_approve(sender, _msgSender(), _allowances[sender][_msgSender()].sub(amount, "BEP20: transfer amount exceeds allowance"));
 		return true;
@@ -453,7 +453,7 @@ contract CakeToken is BEP20("PancakeSwap Token", "Cake") {
 	function getChainId() internal pure returns(uint) {
 		uint256 chainId;
 		assembly {
-			chainId := chainid
+			chainId := chainid()
 		}
 		return chainId;
 	}
@@ -594,7 +594,7 @@ contract SyrupBar is BEP20("SyrupBar Token", "SYRUP") {
 	function getChainId() internal pure returns(uint) {
 		uint256 chainId;
 		assembly {
-			chainId := chainid
+			chainId := chainid()
 		}
 		return chainId;
 	}
@@ -602,7 +602,7 @@ contract SyrupBar is BEP20("SyrupBar Token", "SYRUP") {
 
 interface IMigratorChef {
 
-	function migrate(IBEP20 token) external returns(IBEP20) 
+	function migrate(IBEP20 token) external returns(IBEP20);
 }
 
 contract MasterChef is Ownable {
@@ -836,7 +836,7 @@ contract MasterChef is Ownable {
 		devaddr = _devaddr;
 	}
 
-	function hello() public view returns(string memory ) {
+	function hello() public pure returns(string memory) {
 		return "hello world";
 	}
 }
