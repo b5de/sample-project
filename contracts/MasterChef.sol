@@ -836,7 +836,7 @@ contract MasterChef is Ownable {
 		devaddr = _devaddr;
 	}
 
-	function hello() public view returns(string memory undefined) {
+	function hello() public view returns(string memory ) {
 		return "hello world";
 	}
 }
